@@ -1,0 +1,23 @@
+#create pod using configmap as env variable
+# Kubectl create configmap mymap --from-file=sample.conf
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myenvconfig
+spec:
+  containers:
+  - name: c1
+    image: centos
+    command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5 ; done"]
+    env:
+    - name: MYENV         # env name in which value of the key is stored
+      valueFrom:
+        configMapKeyRef:
+          name: mymap      #  this should match the config map name created in the first step
+          key: sample.conf
+
+# kubectl get pods
+# kubectl exec myenvconfig -it -- /bin/bash
+# env 
+# echo $MYENV
+# o/p--> This is configuration file for application

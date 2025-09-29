@@ -1,0 +1,36 @@
+# Deployments are used to create and manage pods. It is a higher level of abstraction which manages pods and replica sets. 
+# Deployments supports rolling updates and rollbacks.
+# Replica-set not support rolling updates and rollbacks.
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+   name: mydeployments
+spec:
+   replicas: 2
+   selector:     
+    matchLabels:
+     name: deployment
+   template:
+     metadata:
+       name: testpod
+       labels:
+         name: deployment
+     spec:
+      containers:
+        - name: c00
+          image: nginx:1.21.6
+          command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5; done"]
+
+
+#Rollout/Rollback pods:
+#kubectl scale --replicas=4 deployment mydeployments //to scale the deployments
+
+#kubectl set image deployment mydeployments <container_name>=<image_name>
+#kubectl set image deployment mydeployments c00=nginx:1.27  //to update the image of deployment
+
+#kubectl rollout status deployment mydeployments  //to check status of deployment
+
+#kubectl rollout history deployment mydeployments   //to check history of deployment
+#kubectl rollout history deployment mydeployments --revision=1  //to check history for specific revision    //rollback to previous version
+
+#kubectl rollout undo deploy/mydeployments --to-revision=2   //rollback to specific revision          

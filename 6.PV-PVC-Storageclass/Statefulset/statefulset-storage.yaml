@@ -1,0 +1,54 @@
+#The StatefulSet YAML file defines a Kubernetes StatefulSet, which manages the deployment and scaling of stateful applications. 
+#In this example, it creates and manages two replicas of an nginx application.
+
+# Stateful Application: Stores data locally or in persistent storage, requiring pod identity and session retention (e.g., databases like MySQL, Redis).
+# Stateless Application: Does not retain data between requests; each instance is independent and scalable (e.g., web servers, REST APIs).
+
+# StatefulSet: Ensures stable pod identities, ordered scaling, and persistent storage for stateful applications (e.g., databases).
+# Deployment: Manages stateless applications with random pod names, parallel scaling, and ephemeral storage (e.g., web servers, APIs).
+
+
+# The StatefulSet uses the headless-svc Service to discover and connect to the individual pods.
+# It also defines a PersistentVolumeClaim (PVC) template that creates a separate PersistentVolumeClaim for each pod.
+# The PVC template specifies the storageClassName, accessModes, and resources for the PersistentVolumeClaim.
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "headless-svc"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: nginx-data
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: nginx-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+
+# StatefulSet gets StorageClass from the volumeClaimTemplates.
+# If storageClassName is missing, it uses the default StorageClass.
+# Kubernetes provisions separate PVCs per pod using the StorageClass.
+
+# DNS Name Format in StatefulSet Pods:
+# <pod-name>.<service-name>.<namespace>.svc.cluster.local

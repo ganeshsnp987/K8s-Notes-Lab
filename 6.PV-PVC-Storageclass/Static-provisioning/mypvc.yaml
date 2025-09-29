@@ -1,0 +1,24 @@
+# Step2: Create Persistent volume Claim:
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: myebsvolclaim
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 1Gi
+
+--- #Minikube
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-static-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 1Gi

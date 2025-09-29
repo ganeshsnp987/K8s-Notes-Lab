@@ -1,0 +1,15 @@
+# To create pod using Memory limit metioned but request not mentioned.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: constraints-mem-demo-1
+spec:
+  containers:
+  - name: constraints-mem-demo-ctr
+    image: nginx
+    resources:
+      limits:
+        memory: "800Mi"
+
+# o/p--> Request=Limit=800Mi        
+# Request=Not mention Limit=mention ===> Limit=Request

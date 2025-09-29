@@ -1,0 +1,19 @@
+#to create Resourse quota:
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+   name: myquota
+spec:
+  hard:
+    limits.cpu: "400m"
+    limits.memory: "400Mi"
+    requests.cpu: "200m"
+    requests.memory: "200Mi"
+
+
+# **Default Range of CPU and Memory for Container in newly created Namespace:**
+# Limit-Range for CPU-->Request=0.5m
+#                       Limit= 1m
+
+# Limit-Range for MEMORY-->Request=500Mi
+#                          Limit=1Gi

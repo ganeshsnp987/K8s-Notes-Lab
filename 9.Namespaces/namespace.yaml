@@ -1,0 +1,17 @@
+#Create NAMESPACES:
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: dev
+   labels:
+     name: dev
+
+
+# To check how many namespaces created:
+# kubectl get namespaces
+
+# To set namespace:
+# kubectl config set-context $(kubectl config current-context) --namespace=dev  
+
+# To check which namespace we used currently:
+#  kubectl config view | grep namespace:

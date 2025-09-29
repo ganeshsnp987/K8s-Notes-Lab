@@ -1,0 +1,21 @@
+# If k8s Setup using Kubeadm tool then, Kubelet config file path: It contain static pod folder path:
+# cat /var/lib/kubelet/config.yaml
+
+# staticPodPath: /etc/kubernetes/manifests
+# cd /etc/kubernetes/manifests
+
+# If k8s Setup using minikube tool then, static pod folder path:
+# minikube ssh -- ls /etc/kubernetes/manifests
+
+# mv static_pod.yaml /etc/kubernetes/manifests/static_pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-web
+  labels:                                                   
+    env: development
+spec:
+  containers:
+  - name: nginx
+    image: nginx

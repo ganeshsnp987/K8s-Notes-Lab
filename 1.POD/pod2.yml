@@ -1,0 +1,15 @@
+#Mutli-container-pod with annotations:
+kind: Pod
+apiVersion: v1
+metadata:
+  name: testpod3
+  annotations: 
+    Description: This is multi-container pod #annotation added here
+spec:
+  containers:
+    - name: c00
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Ganesh-sanap; sleep 5 ; done"]
+    - name: c01
+      image: ubuntu
+      command: ["/bin/bash", "-c", "while true; do echo Hello-Devops-Engineer; sleep 5 ; done"]

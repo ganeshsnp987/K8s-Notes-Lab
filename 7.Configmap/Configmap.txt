@@ -1,0 +1,19 @@
+
+📌 ConfigMap in Kubernetes
+ConfigMap is a Kubernetes object used to store configuration data (key-value pairs) separately from application code.
+It allows decoupling configuration from containers, making applications more portable.
+
+📌 Ways to Use ConfigMap
+1) As Environment Variables → Inject values into containers.
+2) As Command-Line Arguments → Read values at runtime.
+3) As a Volume → Mount ConfigMap as files inside a pod.
+
+📌 Summary
+As Environment Variables ---> Inject ConfigMap values as env variables (envFrom).
+As Command-Line Arguments ---> Use configMapKeyRef to pass values dynamically.
+As a Mounted Volume ---> Mount as a file and read values from /etc/config/.
+
+🚀 Benefits
+✅ Centralized config management
+✅ Easy updates without rebuilding images
+✅ Environment-specific configurations

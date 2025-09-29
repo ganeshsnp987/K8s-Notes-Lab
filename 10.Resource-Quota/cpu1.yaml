@@ -1,0 +1,15 @@
+# 2) To create pod using CPU limit metioned but request not mentioned.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: default-cpu-demo-1
+spec:
+  containers:
+  - name: default-cpu-demo-2-ctr
+    image: nginx
+    resources:
+      limits:
+        cpu: "1"
+
+# o/p--> Request=Limit=1
+# Request=Not mention Limit=mention ===> Limit=Request

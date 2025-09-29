@@ -1,0 +1,88 @@
+Security Context Implementation:
+
+This repository contains YAML files and commands to implement security context in Kubernetes pods and containers, ensuring secure deployments of your applications.
+
+==File 1: vi sc-demo-1.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  volumes:
+  - name: demo-vol
+    emptyDir: {}
+  containers:
+  - name: sc-demo
+    image: busybox:1.28
+    command: [ "sh", "-c", "sleep 1h" ]
+    volumeMounts:
+    - name: demo-vol
+      mountPath: /data/demo
+:wq
+kubectl apply -f sc-demo-1.yaml
+kubectl exec -it security-context-demo -- /bin/sh
+id  //The id command displays the user ID and group ID of the current user running inside the pod.
+ps aux  //The ps aux command shows the processes running inside the pod along with their details.
+
+Since a volume is mounted, you can navigate to the mounted directory and perform file operations:
+cd /data/demo
+echo hello devopspro >> myfile
+ls -l
+
+==File 2: vi sc-demo-2.yaml
+
+This YAML file demonstrates the implementation of security context at both the pod and container level.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-2
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+  - name: sc-demo-2
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      runAsUser: 2000
+:wq
+kubectl apply -f sc-demo-2.yaml
+kubectl exec -it security-context-demo-2 -- /bin/sh
+id  //The id command displays the user ID and group ID of the current user running inside the pod.
+ps aux  //The ps aux command shows the processes running inside the pod along with their details.
+
+==File 3: vi sc-demo-3.yaml
+
+This YAML file demonstrates the addition of the NET_ADMIN capability to a container.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-3
+spec:
+  containers:
+  - name: sc-demo-3
+    image: ubuntu
+    command: [ "sh", "-c", "sleep 1h" ]
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN"]
+:wq
+kubectl apply -f sc-demo-3.yaml
+kubectl exec -it security-context-demo-3 -- /bin/bash
+apt update
+apt install iproute2  //install the "iproute2" package, which provides advanced IP routing and network devices configuration.
+
+ip link show  //To check the network interfaces and their details, such as name, state, and MAC address.
+
+ip addr add 192.168.0.10/24 dev eth0  //To add an IP address to the eth0 network interface, This command assigns the IP address "192.168.0.10" with a subnet mask of "/24" to the "eth0" network interface.
+
+ip addr del 192.168.0.10/24 dev eth0  //To delete an IP address to the eth0 network interface.
+
+ip addr show eth0   //This command displays the details of the "eth0" network interface, including the assigned IP address.
+

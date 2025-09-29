@@ -1,0 +1,31 @@
+#create pod using configmap as volume
+# Kubectl create configmap <map name> --from-file=<config file name>  // Create configmap 
+# Kubectl create configmap mymap --from-file=sample.conf
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myvolconfig
+spec:
+  containers:
+  - name: c1
+    image: centos
+    command: ["/bin/bash", "-c", "while true; do echo Technical-Guftgu; sleep 5 ; done"]
+    volumeMounts:
+      - name: testconfigmap
+        mountPath: "/tmp/config"   # the config files will be mounted as ReadOnly by default here
+  volumes:
+  - name: testconfigmap
+    configMap:
+       name: mymap   # this should match the config map name created in the first step
+       items:
+       - key: sample.conf
+         path: sample.conf 
+
+# kubectl get pods
+# kubectl exec myvolconfig -it --/bin/bash
+# cd /tmp/config
+# ls
+# o/p--> myvolconfig
+# cat myvolconfig
+# This is configuration file for application         

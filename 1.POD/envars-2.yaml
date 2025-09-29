@@ -1,0 +1,21 @@
+#passed new values on runtime with help of environment variable and also used commands and arguments
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-var-2
+  labels:
+    purpose: demonstrate-env-var-2
+spec:
+  containers:
+  - name: env-var
+    image: wordpress        # Use the same docker image created above
+    env:
+    - name: WORDPRESS_VERSION
+      value: "5.2.2"
+    - name: WORDPRESS_USER
+      value: "ubuntu"
+    command:
+    - /bin/sh
+    - "-c"        # Ensure "-c" is properly quoted
+    args:
+    - 'while true; do echo "WordPress Version: $WORDPRESS_VERSION, User: $WORDPRESS_USER"; sleep 10; done' # Properly quoted command

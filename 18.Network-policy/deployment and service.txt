@@ -1,0 +1,132 @@
+Network Policy in Kubernetes:
+
+Install the CNI Plugin:
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl get pods -n kube-system
+
+
+1)Create an nginx deployment and expose it via a service:
+
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80
+kubectl get svc,pod
+
+This creates a deployment of the nginx image and exposes it as a service listening on port 80. The kubectl get command is used to confirm that both the service and pod were created successfully.
+
+2)Test the service by accessing it from another Pod:
+
+kubectl run busybox --rm -it --image=busybox:1.28 -- /bin/sh
+This creates a new Pod running the BusyBox image. Once inside the shell of the Pod, run the following command:
+
+wget --spider --timeout=1 nginx
+This command tests the connection to the nginx service. The output should confirm a successful connection to the service.
+
+3)Limit access to the nginx service so that only Pods with the label access: true can query it, create a NetworkPolicy object as follows:
+vi network-policy.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: access-nginx
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: "true"
+:wq
+kubectl apply -f network-policy.yaml
+
+This creates a NetworkPolicy object that specifies which pods can access the nginx service. The kubectl apply command applies the NetworkPolicy object to the cluster.
+
+4)Test access to the service when access label is not defined:
+
+kubectl run busybox --rm -it --image=busybox:1.28 -- /bin/sh
+wget --spider --timeout=1 nginx
+
+This creates a new Pod running the BusyBox image. Once inside the shell of the Pod, run the wget command to access the nginx service. Since the Pod does not have the required access: true label, the output should indicate a download timeout.
+
+5)Define the access label and test again:
+
+kubectl run busybox --rm -it --labels="access=true" --image=busybox:1.28 -- /bin/sh
+wget --spider --timeout=1 nginx
+
+This creates a new Pod running the BusyBox image with the required access: true label, and tests the connection to the nginx service again. The output should confirm a successful connection to the service.
+
+Conclusion:
+In this lab exercise, we learned how to use network policies in Kubernetes to limit access to a service. By creating a NetworkPolicy object, we specified which pods can access the service based on their labels. This can be useful in a production environment where security is a concern and access to certain services needs to be restricted.
+
+Assignment: Create a Network Policy in Kubernetes:
+
+The assignment requires you to create a YAML file for a network policy in Kubernetes that meets the following requirements:
+
+1.Name of the network policy will be db-network-policy.
+2.This network policy will apply on dbpod, and the label of db-pod is role: db-pod.
+3.Ingress traffic will come from another pod that is internal pod, and the label of the internal-pod is role: internal-db. This internal pod is present in the dev namespace, and ingress traffic will come on port number 8080.
+4.Egress traffic will go to server present outside the cluster whose IP address range is 172.17.0.0/16, except for 172.17.1.0/24. Egress traffic should come in port range 30000 to 32768.
+Sulution:
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80
+kubectl get svc,pod
+
+You need to create a YAML file that meets all of the above requirements.
+vi db-network-policy.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: db-pod
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: internal-db
+      namespaceSelector:
+        matchLabels:
+          name: dev
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    ports:
+    - protocol: TCP
+      port: 30000
+      endPort: 32768
+:wq
+Kubectl apply -f db-network-policy.yaml
+
+Create an nginx deployment and expose it via a service:
+
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80
+kubectl get svc,pod
+
+
+A NetworkPolicy in Kubernetes is like a firewall for Pods.
+
+By default, all Pods in a cluster can talk to each other.
+
+A NetworkPolicy lets you control which Pods are allowed to talk to which Pods (and on which ports).
+
+You can allow or block inbound (ingress) and outbound (egress) traffic.
+
+It works only if your cluster uses a CNI plugin that supports it (like Calico, Cilium, etc.).
+
+👉 In short:
+NetworkPolicy = Rules that decide "who can talk to whom" inside your Kubernetes cluster.
+

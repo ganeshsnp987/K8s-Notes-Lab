@@ -1,0 +1,18 @@
+# Cron jOb: Periodically run, execute, terminate and delete job
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+ name: bhupi
+spec:
+ schedule: "* * * * *"
+ jobTemplate:
+   spec:
+     template:
+       spec:
+         containers:
+         - image: ubuntu
+           name: bhupi
+           command: ["/bin/bash", "-c", "echo Technical-Guftgu; sleep 20"]
+         restartPolicy: Never
+
+# Note: container inside job3 get executed and then terminated and deleted after 5 sec and repeat same process periodically after 1 min and every time new container is created.         

@@ -1,0 +1,19 @@
+# RC supports ONLY equality based selectors.
+kind: ReplicationController               
+apiVersion: v1
+metadata:
+  name: myreplica
+spec:
+  replicas: 2            
+  selector:        #selector is used to match the labels     
+    myname: ganesh                             
+  template:                
+    metadata:
+      name: testpod6
+      labels:            #labels are used to match the selector
+        myname: ganesh
+    spec:
+     containers:
+       - name: c00
+         image: ubuntu
+         command: ["/bin/bash", "-c", "while true; do echo Hello-Bhupinder; sleep 5 ; done"]

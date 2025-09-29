@@ -1,0 +1,16 @@
+#Communication between two containers within diffetent pod in same node:
+kind: Pod
+apiVersion: v1
+metadata:
+  name: testpod1
+spec:
+  containers:
+    - name: c01
+      image: nginx
+      ports:
+       - containerPort: 80
+
+# Kubectl get pods -o wide
+# kubectl exec -it testpod1 -- /bin/bash
+# apt update && apt install curl -y
+# curl <pod1 ip>:80       

@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress-fixed
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+      - my-nginx.local
+      - sample-1.my-nginx.local
+      - sample-2.my-nginx.local
+    secretName: tls-secret-selfsigned
+  rules:
+    - host: my-nginx.local
+      http:
+        paths:
+          - path: /sample-1
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-1
+                port:
+                  number: 3000
+          - path: /sample-2
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-2
+                port:
+                  number: 3000
+    - host: sample-1.my-nginx.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-3
+                port:
+                  number: 3000
+    - host: sample-2.my-nginx.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-4
+                port:
+                  number: 3000

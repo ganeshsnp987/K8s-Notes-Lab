@@ -1,0 +1,26 @@
+#HOST PATH: 2)Sharing volume between containers and host.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myvolhostpath
+spec:
+  containers:
+  - image: centos
+    name: testc
+    command: ["/bin/bash", "-c", "sleep 15000"]
+    volumeMounts:
+    - name: testvolume
+      mountPath: /tmp/hostpath
+  volumes:
+  - name: testvolume
+    hostPath:
+      path: /home/docker
+
+ 
+# kubectl get pods
+# cd /tmp/data
+# kubectl exec myvolhostpath -- ls /tmp/hostpath
+# touch f1 f2 f3  //craete some file here
+# minikube ssh
+# ls
+      

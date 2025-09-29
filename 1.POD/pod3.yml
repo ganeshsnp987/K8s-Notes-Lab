@@ -1,0 +1,13 @@
+#command and arguments:
+kind: Pod                              
+apiVersion: v1                     
+metadata:                           
+  name: testpod                  
+spec:                                    
+  containers:                      
+    - name: c00                     
+      image: ubuntu              
+      command: ["echo"]
+      args: ["Ganesh Sanap"] 
+      
+  restartPolicy: Never

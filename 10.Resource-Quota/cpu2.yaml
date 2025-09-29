@@ -1,0 +1,15 @@
+# To craete pod using CPU Request metioned but limit not mentioned
+apiVersion: v1
+kind: Pod
+metadata:
+  name: default-cpu-demo-2
+spec:
+  containers:
+  - name: default-cpu-demo-3-ctr
+    image: nginx
+    resources:
+      requests:
+        cpu: "0.75"
+
+# o/p--> Limit=Deafault limit i.e. Deafault limit for cpu in namespace is 1    
+# Request=mention Limit=Not mention ===> Limit=default 1

@@ -1,0 +1,23 @@
+# 2) Configmap declare as Environment variable but here use only specific environment variable from configmap :
+# kubectl create configmap configmap-2 --from-literal=name=second-configmap --from-literal=color=blue
+# kubectl get cm
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-demo-2
+spec:
+  containers:
+  - name: demo-container
+    image: nginx
+    env:
+    - name: COLOR
+      valueFrom:   
+        configMapKeyRef:   
+          name: configmap-2
+          key: color
+
+# kubectl apply -f configmap-2.yaml
+# kubectl get pods
+# kubectl exec configmap-demo-2 -it -- printenv | grep COLOR
+# o/p->COLOR=blue          

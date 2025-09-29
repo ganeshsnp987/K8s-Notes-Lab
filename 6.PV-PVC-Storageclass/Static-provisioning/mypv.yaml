@@ -1,0 +1,38 @@
+# Static provisioning: Admin creates PVs and PVCs manually.
+# Admin manually creates a Persistent Volume (PV) before any application requests storage.
+# The PersistentVolumeClaim (PVC) binds to an existing PV if it matches the request.
+# Used when you have pre-allocated storage like an existing AWS EBS volume or an NFS share.
+# If the PVC matches the PV (same access mode and storage size), Kubernetes binds them. 
+# ACCESS MODES: ReadWriteOnce, ReadOnlyMany, ReadWriteMany
+
+#Step1: Create Persistent volume:
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: myebsvol
+# spec:
+#   capacity:
+#     storage: 1Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   persistentVolumeReclaimPolicy: Retain
+#   awsElasticBlockStore:
+#     volumeID: vol-0194281eb457dd4d1          # YAHAN APNI EBS VOLUME ID DAALO
+#     fsType: ext4
+
+
+--- #Minikube
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-static-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  persistentVolumeReclaimPolicy: Retain  # Keeps data even if PVC is deleted
+  hostPath:
+    path: "/mnt/data"  # Directory on Minikube node

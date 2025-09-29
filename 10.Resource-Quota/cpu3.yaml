@@ -1,0 +1,14 @@
+# To create pod using cpu request and limit metioned exceeded than Limit range.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: default-cpu-demo-3
+spec:
+  containers:
+  - name: default-cpu-demo-2-ctr
+    image: nginx
+    resources:
+      limits:
+        cpu: "2"
+      requests:
+        cpu: "0.40"  

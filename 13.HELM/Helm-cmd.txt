@@ -1,0 +1,173 @@
+To download helm:
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+To verify the installation use the following command
+which helm
+
+To check helm version:
+helm version
+
+**heml repo:
+This command consists of multiple subcommands to interact with chart repositories.
+It can be used to add, remove, list, and index chart repositories.
+Usage:
+  helm repo [command]
+Available Commands:
+ helm repo add         add a chart repository //helm repo add <repo name> <url>
+ helm repo index       generate an index file given a directory containing packaged charts//helm repo index <chart name>
+ helm repo list        list chart repositories
+ helm repo remove      remove one or more chart repositories// helm repo remove <repo name>
+ helm repo update      update information of available charts locally from chart repositories// helm repo update <repo name>
+
+below are some helm repo:
+Name		URL
+stable          https://charts.helm.sh/stable
+bitnami         https://charts.bitnami.com/bitnami
+jenkins         https://charts.jenkins.io
+metrics-server  https://kubernetes-sigs.github.io/metrics-server/
+
+**Let’s create Our First Helm repo:
+helm repo add <name> <url>
+helm repo add stable https://charts.helm.sh/stable
+
+**Let’s create Our First Helm charts:
+helm create //create new chart with given name 
+helm create <chart name>
+helm create charts
+tree charts // By default this package is create when we create new chart.
+
+charts
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── NOTES.txt
+│   ├── _helpers.tpl
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml
+
+**helm repo index charts  //index.yaml file created in charts (package)
+tree charts
+charts
+├── Chart.yaml
+├── charts
+├── index.yaml
+├── templates
+│   ├── NOTES.txt
+│   ├── _helpers.tpl
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── service.yaml
+│   ├── serviceaccount.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml
+
+
+**helm search //finding charts in added repo's in our system.
+helm search repo <chart name>
+
+**helm show //show information about chart (Use this command before installtion of chart)
+helm show <values/chart/readme/all/crds> <chart name> // for you created charts
+helm show all charts
+
+helm show <values/chart/readme/all/crds> <repo_name/path_to_chart> //for you install charts
+helm show all stable/tomcat
+
+This command consists of multiple subcommands to display information about a chart
+Usage:
+  helm show [command]
+Aliases:
+  show, inspect
+Available Commands:
+  all         show all information of the chart
+  chart       show the chart's definition
+  crds        show the chart's CRDs
+  readme      show the chart's README
+  values      show the chart's values
+
+**helm install //install a package
+helm install <release name> <chart name>
+helm install <release name> <chart name> --version
+helm install <release name> <chart name> --wait --timeout 10s
+
+ex:
+helm install mychart stable/tomact --version 0.4.2
+helm install mychart stable/tomact --wait --timeout 10s //wait until all subjects are ready for 10s
+
+**helm get //get information about release name (Use this command after installtion of chart)
+helm get <all/values/manifest/notes/hooks> <chart name>
+This command consists of multiple subcommands which can be used to
+get extended information about the release, including:
+
+- The values used to generate the release
+- The generated manifest file
+- The notes provided by the chart of the release
+- The hooks associated with the release
+
+Usage:
+  helm get [command]
+
+Available Commands:
+  all         download all information for a named release
+  hooks       download all hooks for a named release
+  manifest    download the manifest for a named release
+  notes       download the notes for a named release
+  values      download the values file for a named release
+
+There are two ways to pass configuration data during install:
+1) --set //specified override on the command line
+2) --values //specified override with yaml file
+ex. helm install testchart2 stable/tomcat --set service.type=NodePort
+helm get values chart1
+
+helm install --dry-run <release name> <chart name> //for test output 
+helm install --dry-run mychart stable/tomact 
+
+helm get //get information about release name (Use this command after installtion of chart)
+helm get <value/chart/readme/all> <chart name>
+
+**helm list //list all the name release
+
+**helm status // display the status of the name release
+helm status <release name>
+
+**heml delete <release name> //delete or uninstall deployed release
+heml delete mychart
+
+**helm history //fetch the release history
+helm history <release name>
+
+**helm upgrade //upgrade or rollout the release and new revision is created.
+helm upgrade <release name> <chart name>
+helm upgrade mychart stable/tomcat  
+
+**helm rollback //rollback release to any previous version and new revision is created.
+helm rollback <release name> <revision number>
+helm rollback mychart 1
+
+**helm pull//download chart from repository
+helm pull <char name> //downlaod .tar form of chart in your local repository
+helm pull --untar <char name> //download chart and untar it.
+helm pull --untar stable/tomcat
+
+**Install chart from local repository archive:
+helm install <release name> <chart name.tgz>
+helm istall mychart stable/tomcat-0.4.3.tgz
+
+**Install chart from full URL:
+helm install <release name> <URL>
+
+
+**To uninstall helm:
+which helm ( to see which folder its installed )
+rm -rf /usr/local/bin/helm
+kubectl get all

@@ -1,0 +1,25 @@
+# Init Containers:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: initcontainer
+spec:
+  initContainers:
+  - name: c1
+    image: ubuntu:latest
+    command: ["/bin/sh", "-c", "echo LIKE AND SUBSCRIBE TECHNICAL GUFTGU > /tmp/xchange/testfile; sleep 30"]
+    volumeMounts:        
+      - name: xchange
+        mountPath: "/tmp/xchange"  
+  containers:
+  - name: c2
+    image: ubuntu:latest
+    command: ["/bin/bash", "-c", "while true; do echo `cat /tmp/data/testfile`; sleep 5; done"]
+    volumeMounts:
+      - name: xchange
+        mountPath: "/tmp/data"
+  volumes:                            
+  - name: xchange
+    emptyDir: {}
+
+# Note: In initconatiner pod, first c1 init container is created, perform its task and then terminated and then main c2 container is created. and also volume mounted volume shared between them.    

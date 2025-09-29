@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container-example
+spec:
+  containers:
+  - name: main-container
+    image: your-main-container-image:latest
+    # Add your main container configuration here
+
+  initContainers:
+  - name: init-container
+    image: your-init-container-image:latest
+    # Add your init container configuration here
+    command: ['sh', '-c', 'sql-command-to-create-table']

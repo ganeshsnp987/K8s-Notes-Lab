@@ -1,0 +1,10 @@
+apiVersion: trainwithshubham.com/v1
+kind: Devopsbatch
+metadata:
+  name: batch1
+spec:
+  name: "Kubernetes Advanced Batch"
+  duration: "3 Months"
+  mode: "Live"
+  platform: "Zoom"
+

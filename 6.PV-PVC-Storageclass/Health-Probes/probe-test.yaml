@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: probe-test
+  template:
+    metadata:
+      labels:
+        app: probe-test
+    spec:
+      containers:
+        - name: probe-container
+          image: busybox
+          command: [ "sh", "-c", "touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600" ]
+          livenessProbe:
+            exec:
+              command: [ "cat", "/tmp/healthy" ]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command: [ "cat", "/tmp/healthy" ]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+
+# Key Terminology in Kubernetes:
+# Probes: Mechanisms for checking the health of a container.
+
+# Liveness Probe → Ensures the container is alive.
+# Readiness Probe → Ensures the container is ready to receive traffic.
+# Startup Probe → Ensures an application fully starts before other probes run.
+# Self-Healing: Kubernetes automatically restarts failed containers based on liveness probe failures.
+
+# Service Discovery and Load Balancing: Kubernetes removes pods from the service's endpoint list if they fail the readiness probe.

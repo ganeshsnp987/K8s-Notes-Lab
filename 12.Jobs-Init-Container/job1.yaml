@@ -1,0 +1,17 @@
+# 1)single container on Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: testjob
+spec:
+  template:
+    metadata:
+      name: testjob
+    spec:
+      containers:
+      - name: counter
+        image: centos:7
+        command: ["bin/bash", "-c", "echo Technical-Guftgu; sleep 20"]
+      restartPolicy: Never
+
+# Note: container inside job1 get executed and terminated and then deleted automatically after 20 sec      

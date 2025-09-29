@@ -1,0 +1,25 @@
+# Dynamic provisioning is a way to create storage resources on-demand.
+# No pre-created PVs are required.
+# Kubernetes automatically creates PVs when a PVC is requested.
+# Uses StorageClass to define the provisioner (like AWS EBS, Azure Disk, or GCP PD).
+
+# What Happens When You Delete the PVC?
+# When you delete the PVC, the PV and the corresponding storage directory (/tmp/hostpath-provisioner/pvc-xxx) are automatically deleted 
+# If you had set it to "Retain", the PV would stay, even if the PVC is deleted.
+# If you had set it to "Delete", the PV would be deleted along with the PVC.
+
+#volumeBindingMode: Immediate and WaitForFirstConsumer
+# volumeBindingMode: Immediate (default) - PV is bound as soon as the PVC is created.
+# volumeBindingMode: WaitForFirstConsumer - PV is bound when the Pod using the PVC is created.
+# For Minikube, "Immediate" works fine.
+# For cloud-based Kubernetes clusters!, "WaitForFirstConsumer" is recommended to avoid creating PVs that are not used.
+
+#For Minikube: 
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: my-storage-class
+provisioner: k8s.io/minikube-hostpath  # Minikube local storage provisioner
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+

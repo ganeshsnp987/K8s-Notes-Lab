@@ -1,0 +1,16 @@
+#passed new values on runtime with help of environment variable
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-var
+  labels:
+    purpose: demonstrate-env-var
+spec:
+  containers:
+  - name: env-var-container
+    image: wordpress             #use same docker image above we created
+    env:
+    - name: WORDPRESS_VERSION
+      value: "5.2.2"              #change value of environment variable
+    - name: WORDPRESS_USER
+      value: "ubuntu"

@@ -1,0 +1,20 @@
+# 1) Configmap declare as Environment variable:
+# kubectl create configmap configmap-1 --from-literal=name=first-configmap
+# kubectl get cm
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-demo-1
+spec:
+  containers:
+  - name: demo-container
+    image: nginx
+    envFrom:
+    - configMapRef:
+       name: configmap-1
+
+# kubectl apply -f configmap-1.yaml
+# kubectl get pods
+# kubectl exec configmap-demo-1 -it -- printenv | grep name
+# o/p->name=first-configmap

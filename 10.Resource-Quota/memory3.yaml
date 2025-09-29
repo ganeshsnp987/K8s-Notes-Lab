@@ -1,0 +1,16 @@
+# To create pod using Memory request and limit metioned exceeded than Limit range.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: constraints-mem-demo-3
+spec:
+  containers:
+  - name: constraints-mem-demo-ctr
+    image: nginx
+    resources:
+      limits:
+        memory: "1800Mi"
+      requests:
+        memory: "400Mi"
+
+# Request=exceed or below Limit range ; Limit=exceed or below Limit range ===> Getting error due invalid resouces        

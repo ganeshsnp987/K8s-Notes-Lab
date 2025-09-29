@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: sample-3
+  name: sample-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-3
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: sample-3
+    spec:
+      containers:
+      - image: devopsprosamples/next-path-sample-3
+        name: next-path-sample-3
+        resources: {}
+status: {}
