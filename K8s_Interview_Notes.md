@@ -312,11 +312,37 @@ kubectl port-forward <pod-name> 8080:80
 - **Pipeline Integration**: Jenkins, GitLab CI, GitHub Actions
 - **Best Practices**: Separate config repos, automated testing
 
-### 38. Cost Optimization
-- **Resource Efficiency**: Vertical Pod Autoscaler (VPA)
-- **Spot Instances**: Use for non-critical workloads
-- **Cluster Optimization**: Right-size nodes, remove unused resources
-- **Monitoring**: Track resource utilization and costs
+## 39. Kubernetes Architecture Deep Dive
+### Control Plane Components
+- **API Server**: REST API, authentication, authorization
+- **etcd**: Key-value store for cluster state
+- **Scheduler**: Assigns pods to nodes
+- **Controller Manager**: Runs controllers (deployment, replicaset)
+- **Cloud Controller Manager**: Cloud-specific controllers
+
+### Node Components  
+- **kubelet**: Node agent, manages pods
+- **kube-proxy**: Network proxy, service load balancing
+- **Container Runtime**: Docker, containerd, CRI-O
+
+## 40. Pod Lifecycle & States
+- **Pending**: Scheduled but not running
+- **Running**: At least one container running
+- **Succeeded**: All containers terminated successfully
+- **Failed**: At least one container failed
+- **Unknown**: Communication lost with node
+
+## 41. Admission Controllers
+- **What**: Plugins that intercept API requests
+- **Types**: Validating, Mutating
+- **Examples**: ResourceQuota, PodSecurityPolicy, NetworkPolicy
+- **Custom**: Webhook-based admission controllers
+
+## 42. Container Runtime Interface (CRI)
+- **Purpose**: Standardize container runtime integration
+- **Runtimes**: containerd, CRI-O, Docker (deprecated)
+- **Components**: Runtime, Image service
+- **Benefits**: Runtime flexibility, better performance
 
 ## 23. Health Checks (Probes)
 - **Liveness Probe**: Restart container if unhealthy
@@ -395,14 +421,40 @@ kubectl port-forward <pod-name> 8080:80
 ### High Resource Usage
 - Check resource requests/limits, HPA configuration
 
-## Quick Revision Tips
-1. **Practice kubectl commands** - Most interviews include practical tasks
-2. **Understand YAML structure** - Be able to write basic manifests
-3. **Know the differences** - Deployment vs StatefulSet, Service types
-4. **Security concepts** - RBAC, Network Policies, Security Context
-5. **Troubleshooting** - Common issues and how to debug them
-6. **Architecture questions** - Control plane, data plane components
-7. **Scaling strategies** - HPA, VPA, Cluster Autoscaler
-8. **Networking concepts** - CNI, Service Mesh, Ingress
-9. **Storage patterns** - StatefulSets, PV lifecycle
-10. **Security hardening** - Pod Security, RBAC, Network Policies
+## Top Interview Questions by Experience Level
+
+### Junior Level (0-2 years)
+1. What is Kubernetes and why use it?
+2. Difference between Pod and Container?
+3. What are Services and their types?
+4. Explain Deployment vs ReplicaSet
+5. How to expose an application externally?
+
+### Mid Level (2-4 years)
+1. Explain Kubernetes architecture
+2. Difference between StatefulSet and Deployment
+3. How does service discovery work?
+4. What are ConfigMaps and Secrets?
+5. Explain rolling update process
+6. How to troubleshoot a failing pod?
+
+### Senior Level (4+ years)
+1. Design a multi-tier application deployment
+2. Implement zero-downtime deployments
+3. Kubernetes security best practices
+4. Custom resource and operator development
+5. Cluster scaling and performance optimization
+6. Disaster recovery strategies
+7. Service mesh implementation
+
+## Quick Revision Checklist
+- [ ] **Architecture**: Control plane + Node components
+- [ ] **Core Objects**: Pod, Service, Deployment, ConfigMap, Secret
+- [ ] **Storage**: PV/PVC lifecycle, StatefulSets
+- [ ] **Networking**: Service types, Ingress, Network Policies
+- [ ] **Security**: RBAC, Security Context, Pod Security
+- [ ] **Scaling**: HPA, VPA, Cluster Autoscaler
+- [ ] **Deployment**: Rolling strategies, rollback
+- [ ] **Troubleshooting**: Common issues and debugging
+- [ ] **Commands**: Practice kubectl extensively
+- [ ] **YAML**: Write manifests from scratch
