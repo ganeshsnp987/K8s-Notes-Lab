@@ -27,7 +27,7 @@
   - RS used by Deployments
 - **Difference**: RS has better selector support
 
-## 4. Deployments
+## 4. Deployments & Rolling Strategies
 - **What**: Manages ReplicaSets and Pods
 - **Key Features**:
   - Rolling updates
@@ -35,7 +35,40 @@
   - Scaling
   - Pause/Resume
 - **Commands**: `kubectl rollout status`, `kubectl rollout undo`
-- **Strategies**: RollingUpdate, Recreate
+
+### Deployment Strategies
+#### 1. Rolling Update (Default)
+- **Process**: Gradually replace old pods with new ones
+- **Parameters**: 
+  - `maxUnavailable`: Max pods that can be unavailable
+  - `maxSurge`: Max pods above desired replica count
+- **Pros**: Zero downtime, gradual rollout
+- **Cons**: Mixed versions during update
+
+#### 2. Recreate
+- **Process**: Kill all old pods, then create new ones
+- **Use Case**: When mixed versions can't coexist
+- **Pros**: Simple, clean state
+- **Cons**: Downtime during update
+
+#### 3. Blue-Green Deployment
+- **Process**: Deploy new version alongside old, switch traffic
+- **Implementation**: Two identical environments
+- **Pros**: Instant rollback, no mixed versions
+- **Cons**: Double resource usage
+
+#### 4. Canary Deployment
+- **Process**: Deploy to small subset, gradually increase
+- **Implementation**: Multiple deployments with traffic splitting
+- **Pros**: Risk mitigation, gradual validation
+- **Cons**: Complex setup, requires monitoring
+
+#### 5. A/B Testing
+- **Process**: Run multiple versions simultaneously
+- **Use Case**: Feature testing with user segments
+- **Implementation**: Ingress rules, service mesh
+- **Pros**: Data-driven decisions
+- **Cons**: Complex traffic management
 
 ## 5. Services
 - **Types**:
@@ -178,6 +211,37 @@
 - Use secrets for sensitive data
 - Regular backups of etcd
 
+### Rolling Strategy Examples
+```yaml
+# Rolling Update Configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.20
+
+# Recreate Strategy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  strategy:
+    type: Recreate
+  replicas: 3
+```
+
 ### Commands Cheat Sheet
 ```bash
 # Pods
@@ -185,10 +249,15 @@ kubectl get pods -o wide
 kubectl logs <pod-name>
 kubectl exec -it <pod-name> -- /bin/bash
 
-# Deployments
+# Deployments & Rolling Updates
 kubectl create deployment nginx --image=nginx
 kubectl scale deployment nginx --replicas=3
-kubectl rollout restart deployment nginx
+kubectl set image deployment/nginx nginx=nginx:1.21
+kubectl rollout status deployment/nginx
+kubectl rollout history deployment/nginx
+kubectl rollout undo deployment/nginx
+kubectl rollout pause deployment/nginx
+kubectl rollout resume deployment/nginx
 
 # Services
 kubectl expose deployment nginx --port=80 --type=ClusterIP
@@ -198,10 +267,133 @@ kubectl get svc
 kubectl create configmap myconfig --from-literal=key=value
 kubectl create secret generic mysecret --from-literal=password=secret
 
-# Debugging
+# Node Management
+kubectl get nodes
+kubectl describe node <node-name>
+kubectl cordon <node-name>  # Mark unschedulable
+kubectl drain <node-name>   # Evict pods
+
+# Resource Management
+kubectl top nodes
+kubectl top pods
+kubectl describe quota
+
+# Troubleshooting
 kubectl describe <resource> <name>
 kubectl get events --sort-by=.metadata.creationTimestamp
+kubectl logs <pod-name> --previous  # Previous container logs
+
+# RBAC
+kubectl auth can-i <verb> <resource>
+kubectl get rolebindings,clusterrolebindings
+
+# Networking
+kubectl get endpoints
+kubectl port-forward <pod-name> 8080:80
 ```
+
+## Advanced Interview Topics
+
+### 35. Kubernetes Upgrades
+- **Strategy**: Rolling upgrade of control plane first, then nodes
+- **Tools**: kubeadm upgrade, managed services auto-upgrade
+- **Considerations**: API deprecations, backup before upgrade
+- **Testing**: Validate applications after upgrade
+
+### 36. Performance Tuning
+- **Resource Optimization**: Right-sizing requests/limits
+- **Node Optimization**: Kernel parameters, container runtime
+- **Network Performance**: CNI selection, bandwidth limits
+- **Storage Performance**: Storage class selection, IOPS
+
+### 37. GitOps & CI/CD
+- **GitOps**: Git as source of truth for deployments
+- **Tools**: ArgoCD, Flux for continuous deployment
+- **Pipeline Integration**: Jenkins, GitLab CI, GitHub Actions
+- **Best Practices**: Separate config repos, automated testing
+
+### 38. Cost Optimization
+- **Resource Efficiency**: Vertical Pod Autoscaler (VPA)
+- **Spot Instances**: Use for non-critical workloads
+- **Cluster Optimization**: Right-size nodes, remove unused resources
+- **Monitoring**: Track resource utilization and costs
+
+## 23. Health Checks (Probes)
+- **Liveness Probe**: Restart container if unhealthy
+- **Readiness Probe**: Remove from service if not ready
+- **Startup Probe**: For slow-starting containers
+- **Types**: HTTP, TCP, Exec
+- **Parameters**: initialDelaySeconds, periodSeconds, timeoutSeconds
+
+## 24. Node Affinity & Anti-Affinity
+- **Node Affinity**: Schedule pods on specific nodes
+- **Types**: requiredDuringScheduling, preferredDuringScheduling
+- **Pod Affinity/Anti-Affinity**: Schedule based on other pods
+- **Use Cases**: Co-location, spreading across zones
+
+## 25. Resource Management
+- **Requests**: Minimum guaranteed resources
+- **Limits**: Maximum allowed resources
+- **QoS Classes**: Guaranteed, Burstable, BestEffort
+- **OOMKilled**: When container exceeds memory limit
+
+## 26. Cluster Autoscaler
+- **What**: Automatically scales cluster nodes
+- **Triggers**: Pending pods, underutilized nodes
+- **Cloud Integration**: Works with cloud providers
+- **Considerations**: Node groups, scaling policies
+
+## 27. Monitoring & Observability
+- **Metrics**: Prometheus, Grafana
+- **Logging**: Fluentd, ELK stack
+- **Tracing**: Jaeger, Zipkin
+- **Key Metrics**: CPU, memory, network, disk
+
+## 28. Multi-Container Patterns
+- **Sidecar**: Helper container (logging, proxy)
+- **Ambassador**: Proxy to external services
+- **Adapter**: Transform data format
+- **Init Container**: Setup before main container
+
+## 29. Kubernetes API & Objects
+- **API Groups**: core, apps, extensions
+- **API Versions**: v1, v1beta1, v1alpha1
+- **Object Structure**: apiVersion, kind, metadata, spec, status
+- **Custom Resources**: Extend K8s API
+
+## 30. Operators & CRDs
+- **CRD**: Custom Resource Definition
+- **Operator**: Controller for custom resources
+- **Operator Pattern**: Automate application management
+- **Examples**: Database operators, monitoring operators
+
+## 31. Backup & Disaster Recovery
+- **etcd Backup**: Critical for cluster state
+- **Velero**: Backup tool for K8s resources
+- **Strategies**: Regular snapshots, cross-region replication
+- **Recovery**: Restore from backups, rebuild cluster
+
+## 32. Kubernetes Networking
+- **CNI**: Container Network Interface
+- **Pod-to-Pod**: Flat network, unique IPs
+- **Service Mesh**: Istio, Linkerd for advanced networking
+- **DNS**: CoreDNS for service discovery
+
+## 33. Security Best Practices
+- **Pod Security Standards**: Restricted, Baseline, Privileged
+- **Image Security**: Scan for vulnerabilities
+- **Admission Controllers**: Validate/mutate resources
+- **Network Segmentation**: Isolate workloads
+
+## 34. Troubleshooting Scenarios
+### Pod Stuck in Pending
+- Check node resources, taints/tolerations, PVC binding
+### Pod CrashLoopBackOff
+- Check logs, liveness probe, resource limits
+### Service Not Accessible
+- Verify endpoints, labels, network policies
+### High Resource Usage
+- Check resource requests/limits, HPA configuration
 
 ## Quick Revision Tips
 1. **Practice kubectl commands** - Most interviews include practical tasks
@@ -209,3 +401,8 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 3. **Know the differences** - Deployment vs StatefulSet, Service types
 4. **Security concepts** - RBAC, Network Policies, Security Context
 5. **Troubleshooting** - Common issues and how to debug them
+6. **Architecture questions** - Control plane, data plane components
+7. **Scaling strategies** - HPA, VPA, Cluster Autoscaler
+8. **Networking concepts** - CNI, Service Mesh, Ingress
+9. **Storage patterns** - StatefulSets, PV lifecycle
+10. **Security hardening** - Pod Security, RBAC, Network Policies
