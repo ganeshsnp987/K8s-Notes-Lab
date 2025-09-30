@@ -1,8 +1,3 @@
-Here’s a cleaned-up, simplified, and more interview-focused version of your **K8s Notes** (`k8s-notes.md`).
-I kept the `.md` format, made the wording simpler, and added missing but commonly asked interview topics (like VPA, CNI plugins, service mesh, logging, etc.).
-
-You can directly use this as your **final prep guide**.
-
 ---
 
 # Kubernetes Interview Preparation Notes
@@ -282,7 +277,3 @@ You can directly use this as your **final prep guide**.
 * [ ] YAML → Write manifests from scratch
 
 ---
-
-✅ This version is **interview-focused**, in **simpler words**, and covers missing but important areas like VPA, CNI plugins, service mesh, and logging.
-
-Would you like me to also create a **one-page ultra-short cheat sheet** (just key commands + one-line concepts) for last-minute revision?
